@@ -18,7 +18,7 @@ const (
 type uuid [16]byte
 
 // NewUUID returns a new uuid using RFC 4122 algorithm.
-func newUUID() (u uuid) {
+func NewUUID() (u uuid) {
 	u = uuid{}
 	// Set all bits to randomly (or pseudo-randomly) chosen values.
 	rand.Read(u[:])

@@ -14,7 +14,7 @@ func NewUniqueRequestIDPolicyFactory() pipeline.Factory {
 		return func(ctx context.Context, request pipeline.Request) (pipeline.Response, error) {
 			id := request.Header.Get(xMsClientRequestID)
 			if id == "" { // Add a unique request ID if the caller didn't specify one already
-				request.Header.Set(xMsClientRequestID, newUUID().String())
+				request.Header.Set(xMsClientRequestID, NewUUID().String())
 			}
 			return next.Do(ctx, request)
 		}
