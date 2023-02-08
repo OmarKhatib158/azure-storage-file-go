@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Azure/azure-storage-file-go/azfile"
+	"github.com/OmarKhatib158/azure-storage-file-go/azfile"
 	chk "gopkg.in/check.v1"
 )
 
