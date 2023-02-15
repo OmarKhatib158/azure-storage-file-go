@@ -40,6 +40,10 @@ var basicMetadata = azfile.Metadata{"foo": "bar"}
 func getAccountAndKey() (string, string) {
 	name := os.Getenv("ACCOUNT_NAME")
 	key := os.Getenv("ACCOUNT_KEY")
+
+	fmt.Print("account name: ", name, "\n")
+	fmt.Print("account key: ", key, "\n")
+
 	if name == "" || key == "" {
 		panic("ACCOUNT_NAME and ACCOUNT_KEY environment vars must be set before running tests")
 	}
@@ -52,6 +56,18 @@ func getFSU() azfile.ServiceURL {
 	u, _ := url.Parse(fmt.Sprintf("https://%s.file.core.windows.net/", accountName))
 
 	credential, err := azfile.NewSharedKeyCredential(accountName, accountKey)
+	if err != nil {
+		panic(err)
+	}
+	pipeline := azfile.NewPipeline(credential, azfile.PipelineOptions{})
+	return azfile.NewServiceURL(*u, pipeline)
+}
+
+func getFSUWithOauth() azfile.ServiceURL {
+	accountName, _ := getAccountAndKey()
+	u, _ := url.Parse(fmt.Sprintf("https://%s.file.core.windows.net/", accountName))
+
+	credential, err := getOAuthCredential("", "")
 	if err != nil {
 		panic(err)
 	}
@@ -96,6 +112,9 @@ func getOAuthCredential(accountType string, resource string) (azfile.TokenCreden
 	applicationIdEnvVar := accountType + "APPLICATION_ID"
 	tenantIdEnvVar := accountType + "TENANT_ID"
 	oauthToken, appId, tenantId, clientSecret := []byte(os.Getenv(oauthTokenEnvVar)), os.Getenv(applicationIdEnvVar), os.Getenv(tenantIdEnvVar), os.Getenv(clientSecretEnvVar)
+
+	fmt.Print("app id: ", appId, "\n")
+	fmt.Print("client secret: ", clientSecret, "\n")
 
 	if (len(oauthToken) == 0 && clientSecret == "") || appId == "" {
 		return nil, errors.New("(" + oauthTokenEnvVar + " OR " + clientSecretEnvVar + ") and/or " + applicationIdEnvVar + " environment variables not specified.")
