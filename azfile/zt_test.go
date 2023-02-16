@@ -63,8 +63,8 @@ func getFSU() azfile.ServiceURL {
 	return azfile.NewServiceURL(*u, pipeline)
 }
 
-func getFSUWithOauth() azfile.ServiceURL {
-	accountName, _ := getAccountAndKey()
+func getFSUWithOAuth() azfile.ServiceURL {
+	accountName := os.Getenv("ACCOUNT_NAME")
 	u, _ := url.Parse(fmt.Sprintf("https://%s.file.core.windows.net/", accountName))
 
 	credential, err := getOAuthCredential("", "")

@@ -7,12 +7,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/xml"
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 )
 
 // fileClient is the client for the File methods of the Azfile service.
@@ -64,6 +65,8 @@ func (client fileClient) abortCopyPreparer(copyID string, timeout *int32) (pipel
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-copy-action", "abort")
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -127,6 +130,7 @@ func (client fileClient) createPreparer(fileContentLength int64, fileAttributes 
 	}
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	req.Header.Set("x-ms-content-length", strconv.FormatInt(fileContentLength, 10))
 	req.Header.Set("x-ms-type", "file")
 	if fileContentType != nil {
@@ -210,6 +214,8 @@ func (client fileClient) deletePreparer(timeout *int32) (pipeline.Request, error
 	}
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -261,6 +267,8 @@ func (client fileClient) downloadPreparer(timeout *int32, rangeParameter *string
 	}
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	if rangeParameter != nil {
 		req.Header.Set("x-ms-range", *rangeParameter)
 	}
@@ -327,6 +335,7 @@ func (client fileClient) forceCloseHandlesPreparer(handleID string, timeout *int
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-handle-id", handleID)
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -381,6 +390,8 @@ func (client fileClient) getPropertiesPreparer(sharesnapshot *string, timeout *i
 	}
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -436,6 +447,8 @@ func (client fileClient) getRangeListPreparer(sharesnapshot *string, timeout *in
 	params.Set("comp", "rangelist")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	if rangeParameter != nil {
 		req.Header.Set("x-ms-range", *rangeParameter)
 	}
@@ -521,6 +534,8 @@ func (client fileClient) listHandlesPreparer(marker *string, maxresults *int32, 
 	params.Set("comp", "listhandles")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -599,6 +614,8 @@ func (client fileClient) setHTTPHeadersPreparer(fileAttributes string, fileCreat
 	params.Set("comp", "properties")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	if fileContentLength != nil {
 		req.Header.Set("x-ms-content-length", strconv.FormatInt(*fileContentLength, 10))
 	}
@@ -684,6 +701,8 @@ func (client fileClient) setMetadataPreparer(timeout *int32, metadata map[string
 		}
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -738,6 +757,8 @@ func (client fileClient) startCopyPreparer(copySource string, timeout *int32, me
 	}
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	if metadata != nil {
 		for k, v := range metadata {
 			req.Header.Set("x-ms-meta-"+k, v)
@@ -814,6 +835,8 @@ func (client fileClient) uploadRangePreparer(rangeParameter string, fileRangeWri
 		req.Header.Set("Content-MD5", base64.StdEncoding.EncodeToString(contentMD5))
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -891,6 +914,8 @@ func (client fileClient) uploadRangeFromURLPreparer(rangeParameter string, copyS
 		req.Header.Set("x-ms-source-if-none-match-crc64", base64.StdEncoding.EncodeToString(sourceIfNoneMatchCrc64))
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 

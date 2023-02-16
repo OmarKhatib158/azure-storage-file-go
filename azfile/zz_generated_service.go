@@ -7,12 +7,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/xml"
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 )
 
 // serviceClient is the client for the Service methods of the Azfile service.
@@ -63,6 +64,8 @@ func (client serviceClient) getPropertiesPreparer(timeout *int32) (pipeline.Requ
 	params.Set("comp", "properties")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -150,6 +153,8 @@ func (client serviceClient) listSharesSegmentPreparer(prefix *string, marker *st
 	params.Set("comp", "list")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -234,6 +239,8 @@ func (client serviceClient) setPropertiesPreparer(storageServiceProperties Stora
 	params.Set("comp", "properties")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	b, err := xml.Marshal(storageServiceProperties)
 	if err != nil {
 		return req, pipeline.NewError(err, "failed to marshal request body")

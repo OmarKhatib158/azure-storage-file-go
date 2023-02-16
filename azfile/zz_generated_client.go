@@ -4,13 +4,15 @@ package azfile
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 import (
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"net/url"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 )
 
 const (
 	// ServiceVersion specifies the version of the operations used in this package.
-	ServiceVersion = "2019-02-02"
+	//ServiceVersion = "2019-02-02"
+	ServiceVersion = "2021-12-02"
 )
 
 // managementClient is the base client for Azfile.

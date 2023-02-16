@@ -3,57 +3,30 @@ package azfile_test
 import (
 	"context"
 	"io/ioutil"
+	"os"
 
 	"github.com/OmarKhatib158/azure-storage-file-go/azfile"
 
-	//"home/omar/repos/ILDC/azure-storage-file-go/azfile/azfile"
-	//"github.com/Azure/azure-storage-file-go/azfile"
 	chk "gopkg.in/check.v1"
 )
 
-func createS2SFileSharesWithTokenCredential(c *chk.C, credential azfile.TokenCredential) (source, dest azfile.ShareURL) {
-	fsu := getFSU()
-	fsu.WithPipeline(azfile.NewPipeline(credential, azfile.PipelineOptions{}))
+type OAuthSuite struct{}
 
-	source, dest = fsu.NewShareURL(azfile.NewUUID().String()), fsu.NewShareURL(azfile.NewUUID().String())
+var _ = chk.Suite(&OAuthSuite{})
 
-	_, err := source.Create(ctx, azfile.Metadata{}, 0)
-	c.Assert(err, chk.IsNil)
-	//_, err = dest.Create(ctx, azfile.Metadata{}, 0)
-	//c.Assert(err, chk.IsNil)
+func getShareName() string {
+	name := os.Getenv("SHARE_NAME")
 
-	return
+	if name == "" {
+		panic("SHARE_NAME environment vars must be set before running oauth tests")
+	}
+
+	return name
 }
 
-// TestUploadRangeFromURL check UploadRangeFromURL
-
-func (s *aztestsSuite) TestFileShareS2SOAuth(c *chk.C) {
-	SetEnvVarsazfilesoauth()
-	ocred, err := getOAuthCredential("", "")
-	c.Assert(err, chk.IsNil)
-	source, _ := createS2SFileSharesWithTokenCredential(c, ocred)
-
-	_, error := createNewFileFromShare(c, source, 2048)
-	//sourceShare := source.NewDirectoryURL("SourceShare")
-
-	//sourceShare := source.NewDirectoryURL("SourceShare")
-	//sourceFile := sourceShare.NewFileURL("SourceFile")
-
-	//_, err = sourceFile.UploadRangeFromURL(ctx, 0, strings.NewReader("data"), nil)
-	//c.Assert(err, chk.IsNil)
-	c.Assert(error, chk.IsNil)
-
-}
-
-func (s *aztestsSuite) TestFileShareOAuth(c *chk.C) {
-	SetEnvVarsPlayGround()
-	fsu := getFSUWithOauth()
-	fsu = getFSU()
-	ocred, _ := getOAuthCredential("", "")
-	fsu.WithPipeline(azfile.NewPipeline(ocred, azfile.PipelineOptions{}))
-
-	shareURL, _ := createNewShare(c, fsu)
-	defer delShare(c, shareURL, azfile.DeleteSnapshotsOptionNone)
+func (s *OAuthSuite) TestFileShareOAuth(c *chk.C) {
+	fsu := getFSUWithOAuth()
+	shareURL := fsu.NewShareURL(getShareName())
 
 	fileSize := 1024 //1024 bytes
 

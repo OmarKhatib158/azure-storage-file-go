@@ -6,12 +6,13 @@ package azfile
 import (
 	"context"
 	"encoding/xml"
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 )
 
 // directoryClient is the client for the Directory methods of the Azfile service.
@@ -83,6 +84,8 @@ func (client directoryClient) createPreparer(fileAttributes string, fileCreation
 	req.Header.Set("x-ms-file-attributes", fileAttributes)
 	req.Header.Set("x-ms-file-creation-time", fileCreationTime)
 	req.Header.Set("x-ms-file-last-write-time", fileLastWriteTime)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -133,6 +136,8 @@ func (client directoryClient) deletePreparer(timeout *int32) (pipeline.Request, 
 	params.Set("restype", "directory")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -199,6 +204,8 @@ func (client directoryClient) forceCloseHandlesPreparer(handleID string, timeout
 		req.Header.Set("x-ms-recursive", strconv.FormatBool(*recursive))
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -254,6 +261,7 @@ func (client directoryClient) getPropertiesPreparer(sharesnapshot *string, timeo
 	params.Set("restype", "directory")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -328,6 +336,7 @@ func (client directoryClient) listFilesAndDirectoriesSegmentPreparer(prefix *str
 	params.Set("comp", "list")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -414,6 +423,7 @@ func (client directoryClient) listHandlesPreparer(marker *string, maxresults *in
 		req.Header.Set("x-ms-recursive", strconv.FormatBool(*recursive))
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -484,6 +494,8 @@ func (client directoryClient) setMetadataPreparer(timeout *int32, metadata map[s
 		}
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -543,6 +555,8 @@ func (client directoryClient) setPropertiesPreparer(fileAttributes string, fileC
 	params.Set("comp", "properties")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	if filePermission != nil {
 		req.Header.Set("x-ms-file-permission", *filePermission)
 	}

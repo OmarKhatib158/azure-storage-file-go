@@ -8,12 +8,13 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"github.com/Azure/azure-pipeline-go/pipeline"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/Azure/azure-pipeline-go/pipeline"
 )
 
 // shareClient is the client for the Share methods of the Azfile service.
@@ -75,6 +76,8 @@ func (client shareClient) createPreparer(timeout *int32, metadata map[string]str
 		req.Header.Set("x-ms-share-quota", strconv.FormatInt(int64(*quota), 10))
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
+
 	return req, nil
 }
 
@@ -127,6 +130,7 @@ func (client shareClient) createPermissionPreparer(sharePermission SharePermissi
 	params.Set("comp", "filepermission")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	b, err := json.Marshal(sharePermission)
 	if err != nil {
 		return req, pipeline.NewError(err, "failed to marshal request body")
@@ -192,6 +196,7 @@ func (client shareClient) createSnapshotPreparer(timeout *int32, metadata map[st
 		}
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -248,6 +253,7 @@ func (client shareClient) deletePreparer(sharesnapshot *string, timeout *int32, 
 	params.Set("restype", "share")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	if deleteSnapshots != DeleteSnapshotsOptionNone {
 		req.Header.Set("x-ms-delete-snapshots", string(deleteSnapshots))
 	}
@@ -302,6 +308,7 @@ func (client shareClient) getAccessPolicyPreparer(timeout *int32) (pipeline.Requ
 	params.Set("comp", "acl")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -369,6 +376,7 @@ func (client shareClient) getPermissionPreparer(filePermissionKey string, timeou
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-file-permission-key", filePermissionKey)
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -438,6 +446,7 @@ func (client shareClient) getPropertiesPreparer(sharesnapshot *string, timeout *
 	params.Set("restype", "share")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -489,6 +498,7 @@ func (client shareClient) getStatisticsPreparer(timeout *int32) (pipeline.Reques
 	params.Set("comp", "stats")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -555,6 +565,7 @@ func (client shareClient) setAccessPolicyPreparer(shareACL []SignedIdentifier, t
 	params.Set("comp", "acl")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	b, err := xml.Marshal(SignedIdentifiers{Items: shareACL})
 	if err != nil {
 		return req, pipeline.NewError(err, "failed to marshal request body")
@@ -620,6 +631,7 @@ func (client shareClient) setMetadataPreparer(timeout *int32, metadata map[strin
 		}
 	}
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	return req, nil
 }
 
@@ -674,6 +686,7 @@ func (client shareClient) setQuotaPreparer(timeout *int32, quota *int32) (pipeli
 	params.Set("comp", "properties")
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("x-ms-version", ServiceVersion)
+	req.Header.Set("x-ms-file-request-intent", "backup")
 	if quota != nil {
 		req.Header.Set("x-ms-share-quota", strconv.FormatInt(int64(*quota), 10))
 	}
